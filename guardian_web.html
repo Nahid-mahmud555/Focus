@@ -1,278 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guardian Portal</title>
-  <style>
-    :root {
-      --bg: #090a0f;
-      --panel: #12141d;
-      --neon-cyan: #00f3ff;
-      --neon-red: #ff003c;
-      --text: #e0e5ff;
-      --text-muted: #64748b;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', system-ui, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .panel {
-      background: var(--panel);
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 
-        0 10px 30px rgba(0,0,0,0.8),
-        inset 0 2px 0 rgba(255,255,255,0.05),
-        inset 0 -2px 0 rgba(0,0,0,0.5);
-      border: 1px solid #1f2233;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      box-sizing: border-box;
-    }
-
-    h1 {
-      margin: 0 0 10px 0;
-      font-size: 28px;
-      color: var(--neon-cyan);
-      text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-      letter-spacing: 3px;
-    }
-
-    p {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-bottom: 30px;
-      line-height: 1.5;
-    }
-
-    input[type="password"] {
-      background: #050505;
-      border: 1px solid #1f2233;
-      color: var(--neon-cyan);
-      padding: 15px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 24px;
-      width: 100%;
-      box-sizing: border-box;
-      margin-bottom: 20px;
-      outline: none;
-      box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-      text-align: center;
-      letter-spacing: 10px;
-    }
-
-    input[type="password"]:focus {
-      border-color: var(--neon-cyan);
-      box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.1);
-    }
-
-    .cyber-btn {
-      background: linear-gradient(180deg, #1a1a1a, #0a0a0a);
-      border: 1px solid #333;
-      color: var(--neon-cyan);
-      padding: 18px;
-      font-size: 16px;
-      font-weight: bold;
-      letter-spacing: 2px;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 
-        0 4px 0 #000,
-        0 5px 15px rgba(0, 243, 255, 0.2);
-      transition: all 0.1s;
-      width: 100%;
-    }
-
-    .cyber-btn:active {
-      transform: translateY(4px);
-      box-shadow: 
-        0 0 0 #000,
-        0 0 20px rgba(0, 243, 255, 0.4);
-    }
-
-    .cyber-btn.danger {
-      color: var(--neon-red);
-      box-shadow: 
-        0 4px 0 #000,
-        0 5px 15px rgba(255, 0, 60, 0.2);
-    }
-
-    .cyber-btn.danger:active {
-      box-shadow: 
-        0 0 0 #000,
-        0 0 20px rgba(255, 0, 60, 0.4);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .error {
-      color: var(--neon-red);
-      font-size: 12px;
-      margin-top: 15px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    .success-text {
-      color: #00ff00;
-      text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Guardian Control | Focus Pilot</title>
+    <style>
+        body { background: #0a0a0a; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: #111; padding: 30px; border-radius: 15px; border: 1px solid #ff003c; text-align: center; width: 300px; }
+        input { width: 80%; padding: 10px; margin: 20px 0; background: #222; border: 1px solid #444; color: #fff; text-align: center; font-size: 1.5rem; letter-spacing: 5px; }
+        button { background: #ff003c; color: #fff; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
+        #unlock-btn { background: #00ff88; color: #000; margin-top: 10px; display: none; }
+    </style>
 </head>
 <body>
+    <div class="box">
+        <h2 style="color: #ff003c;">GUARDIAN LOCK</h2>
+        <p>Set a 4-digit PIN to lock your friend's browser.</p>
+        <input type="password" id="pin" maxlength="4" placeholder="****">
+        <button id="lock-btn">SET LOCK</button>
+        <button id="unlock-btn">UNLOCK NOW</button>
+    </div>
 
-  <div class="panel" id="loading-view">
-    <h2 style="color: var(--neon-cyan); letter-spacing: 2px;">CONNECTING...</h2>
-    <p>Establishing secure channel to Focus Pilot.</p>
-  </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const binId = params.get('id') || '07fbb68e8699db5dc69f';
+        const url = `https://api.npoint.io/${binId}`;
 
-  <div class="panel hidden" id="setup-view">
-    <h1>GUARDIAN PORTAL</h1>
-    <p>Set a 4-digit PIN to lock the user's distracting websites. Only you can unlock them.</p>
-    <input type="password" id="new-pin" maxlength="4" placeholder="••••">
-    <button id="lock-btn" class="cyber-btn">ENGAGE LOCK</button>
-    <div id="setup-error" class="error hidden">PLEASE ENTER 4 DIGITS</div>
-  </div>
+        const lockBtn = document.getElementById('lock-btn');
+        const unlockBtn = document.getElementById('unlock-btn');
+        const pinInput = document.getElementById('pin');
 
-  <div class="panel hidden" id="unlock-view">
-    <h1 style="color: var(--neon-red); text-shadow: 0 0 15px rgba(255,0,60,0.5);">SYSTEM LOCKED</h1>
-    <p>Enter your Guardian PIN to disengage the lock and free the user.</p>
-    <input type="password" id="enter-pin" maxlength="4" placeholder="••••">
-    <button id="unlock-btn" class="cyber-btn danger">DISENGAGE LOCK</button>
-    <div id="unlock-error" class="error hidden">INVALID PIN</div>
-  </div>
+        lockBtn.onclick = async () => {
+            const pin = pinInput.value;
+            if(pin.length !== 4) return alert("৪ ডিজিট পিন দাও মামা!");
+            
+            await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ status: 'LOCKED', pin: pin })
+            });
+            alert("লক হয়ে গেছে!");
+            lockBtn.style.display = 'none';
+            unlockBtn.style.display = 'block';
+        };
 
-  <div class="panel hidden" id="success-view">
-    <h1 class="success-text">SUCCESS</h1>
-    <p id="success-msg" style="color: #e0e5ff;"></p>
-  </div>
-
-  <script>
-    const API_BASE = 'https://api.npoint.io';
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('id');
-
-    const loadingView = document.getElementById('loading-view');
-    const setupView = document.getElementById('setup-view');
-    const unlockView = document.getElementById('unlock-view');
-    const successView = document.getElementById('success-view');
-    const successMsg = document.getElementById('success-msg');
-
-    let sessionData = null;
-
-    async function init() {
-      if (!sessionId) {
-        showError('INVALID LINK', 'No session ID provided in the URL.');
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE}/${sessionId}`);
-        sessionData = await res.json();
-        
-        loadingView.classList.add('hidden');
-        
-        if (!sessionData || !sessionData.status) {
-          showError('SESSION NOT FOUND', 'This link is invalid or has expired.');
-          return;
-        }
-
-        if (sessionData.status === 'PENDING') {
-          setupView.classList.remove('hidden');
-        } else if (sessionData.status === 'LOCKED') {
-          unlockView.classList.remove('hidden');
-        } else if (sessionData.status === 'UNLOCKED') {
-          showSuccess('SYSTEM ALREADY UNLOCKED', 'The user is currently unrestricted.');
-        }
-      } catch (e) {
-        showError('CONNECTION ERROR', 'Failed to connect to the database.');
-      }
-    }
-
-    document.getElementById('lock-btn').addEventListener('click', async () => {
-      const pin = document.getElementById('new-pin').value;
-      if (pin.length !== 4) {
-        document.getElementById('setup-error').classList.remove('hidden');
-        return;
-      }
-      
-      document.getElementById('lock-btn').textContent = 'ENGAGING...';
-      
-      try {
-        await fetch(`${API_BASE}/${sessionId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ status: 'LOCKED', pin: pin })
-        });
-        
-        setupView.classList.add('hidden');
-        showSuccess('LOCK ENGAGED', 'The user is now restricted from distracting websites.');
-      } catch (e) {
-        document.getElementById('lock-btn').textContent = 'ENGAGE LOCK';
-        document.getElementById('setup-error').textContent = 'NETWORK ERROR';
-        document.getElementById('setup-error').classList.remove('hidden');
-      }
-    });
-
-    document.getElementById('unlock-btn').addEventListener('click', async () => {
-      const pin = document.getElementById('enter-pin').value;
-      if (pin !== sessionData.pin) {
-        document.getElementById('unlock-error').classList.remove('hidden');
-        return;
-      }
-      
-      document.getElementById('unlock-btn').textContent = 'DISENGAGING...';
-      
-      try {
-        await fetch(`${API_BASE}/${sessionId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ status: 'UNLOCKED', pin: sessionData.pin })
-        });
-        
-        unlockView.classList.add('hidden');
-        showSuccess('LOCK DISENGAGED', 'The user is now free to access all websites.');
-      } catch (e) {
-        document.getElementById('unlock-btn').textContent = 'DISENGAGE LOCK';
-        document.getElementById('unlock-error').textContent = 'NETWORK ERROR';
-        document.getElementById('unlock-error').classList.remove('hidden');
-      }
-    });
-
-    function showSuccess(title, msg) {
-      loadingView.classList.add('hidden');
-      setupView.classList.add('hidden');
-      unlockView.classList.add('hidden');
-      
-      successView.querySelector('h1').textContent = title;
-      successMsg.textContent = msg;
-      successView.classList.remove('hidden');
-    }
-
-    function showError(title, msg) {
-      loadingView.innerHTML = `<h2 style="color: var(--neon-red);">${title}</h2><p>${msg}</p>`;
-      loadingView.classList.remove('hidden');
-    }
-
-    init();
-  </script>
+        unlockBtn.onclick = async () => {
+            const pin = pinInput.value;
+            const res = await fetch(url);
+            const data = await res.json();
+            if(pin === data.pin) {
+                await fetch(url, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ status: 'UNLOCKED', pin: "" })
+                });
+                alert("আনলকড!");
+                location.reload();
+            } else { alert("ভুল পিন!"); }
+        };
+    </script>
 </body>
 </html>
