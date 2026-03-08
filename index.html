@@ -2,22 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guardian Control | Focus Pilot</title>
     <style>
         body { background: #0a0a0a; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: #111; padding: 30px; border-radius: 15px; border: 1px solid #ff003c; text-align: center; width: 300px; }
-        input { width: 80%; padding: 10px; margin: 20px 0; background: #222; border: 1px solid #444; color: #fff; text-align: center; font-size: 1.5rem; letter-spacing: 5px; }
-        button { background: #ff003c; color: #fff; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
-        #unlock-btn { background: #00ff88; color: #000; margin-top: 10px; display: none; }
+        .box { background: #111; padding: 30px; border-radius: 15px; border: 1px solid #ff003c; text-align: center; width: 320px; box-shadow: 0 0 20px rgba(255, 0, 62, 0.2); }
+        h2 { color: #ff003c; letter-spacing: 1px; }
+        p { color: #888; font-size: 0.9rem; }
+        input { width: 85%; padding: 12px; margin: 20px 0; background: #222; border: 1px solid #444; color: #fff; text-align: center; font-size: 1.5rem; letter-spacing: 8px; border-radius: 8px; }
+        input:focus { border-color: #ff003c; outline: none; }
+        button { background: #ff003c; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+        button:hover { background: #ff3366; transform: translateY(-2px); }
+        #unlock-btn { background: #00ff88; color: #000; margin-top: 15px; display: none; }
+        #unlock-btn:hover { background: #00cc6e; }
+        .loader { font-size: 0.8rem; color: #ffea00; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2 style="color: #ff003c;">GUARDIAN LOCK</h2>
-        <p>Set a 4-digit PIN to lock your friend's browser.</p>
+        <h2>GUARDIAN LOCK</h2>
+        <p id="msg">Set a 4-digit PIN to lock your friend's browser.</p>
         <input type="password" id="pin" maxlength="4" placeholder="****">
         <button id="lock-btn">SET LOCK</button>
         <button id="unlock-btn">UNLOCK NOW</button>
+        <div id="loader" class="loader">Processing...</div>
     </div>
 
     <script>
@@ -28,34 +36,67 @@
         const lockBtn = document.getElementById('lock-btn');
         const unlockBtn = document.getElementById('unlock-btn');
         const pinInput = document.getElementById('pin');
+        const msg = document.getElementById('msg');
+        const loader = document.getElementById('loader');
 
+        // ১. পেজ লোড হওয়ার সময় বর্তমান স্ট্যাটাস চেক করা
+        async function checkStatus() {
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data && data.status === 'LOCKED') {
+                    lockBtn.style.display = 'none';
+                    unlockBtn.style.display = 'block';
+                    msg.innerText = "Status: CURRENTLY LOCKED";
+                    msg.style.color = "#ffea00";
+                }
+            } catch (e) { console.error("Error fetching status"); }
+        }
+        checkStatus();
+
+        // ২. লক করার লজিক
         lockBtn.onclick = async () => {
             const pin = pinInput.value;
-            if(pin.length !== 4) return alert("৪ ডিজিট পিন দাও মামা!");
+            if(pin.length !== 4) return alert("মামা, ৪ ডিজিটের পিন দাও!");
             
-            await fetch(url, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ status: 'LOCKED', pin: pin })
-            });
-            alert("লক হয়ে গেছে!");
-            lockBtn.style.display = 'none';
-            unlockBtn.style.display = 'block';
-        };
-
-        unlockBtn.onclick = async () => {
-            const pin = pinInput.value;
-            const res = await fetch(url);
-            const data = await res.json();
-            if(pin === data.pin) {
+            loader.style.display = 'block';
+            try {
                 await fetch(url, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ status: 'UNLOCKED', pin: "" })
+                    body: JSON.stringify({ status: 'LOCKED', pin: pin })
                 });
-                alert("আনলকড!");
-                location.reload();
-            } else { alert("ভুল পিন!"); }
+                alert("লক হয়ে গেছে! মামা এখন আর ফাঁকি দিতে পারবে না।");
+                location.reload(); // স্টেট আপডেট করার জন্য রিফ্রেশ
+            } catch (e) {
+                alert("Connection failed!");
+            } finally { loader.style.display = 'none'; }
+        };
+
+        // ৩. আনলক করার লজিক
+        unlockBtn.onclick = async () => {
+            const pin = pinInput.value;
+            if(!pin) return alert("আনলক করতে পিনটা দাও মামা!");
+            
+            loader.style.display = 'block';
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if(pin === data.pin) {
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ status: 'UNLOCKED', pin: "" })
+                    });
+                    alert("সফলভাবে আনলক হয়েছে!");
+                    location.reload();
+                } else {
+                    alert("ভুল পিন! মামাকে কি ধোঁকা দিচ্ছো?");
+                }
+            } catch (e) {
+                alert("Connection error!");
+            } finally { loader.style.display = 'none'; }
         };
     </script>
 </body>
