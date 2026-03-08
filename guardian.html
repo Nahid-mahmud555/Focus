@@ -2,480 +2,101 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guardian PIN - Focus Pilot</title>
+    <title>Guardian PIN</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 32px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        h1 {
-            color: #0f172a;
-            font-size: 32px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        h1 span {
-            background: #8b5cf6;
+            background: #0f172a;
             color: white;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 16px;
-        }
-        
-        .subtitle {
-            color: #475569;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-        
-        .info-box {
-            background: #f1f5f9;
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            border-left: 4px solid #8b5cf6;
-        }
-        
-        .info-box p {
-            color: #334155;
-            margin-bottom: 8px;
+            font-family: Arial;
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 8px;
-        }
-        
-        .site-list {
-            background: #f8fafc;
-            border-radius: 20px;
+            min-height: 100vh;
+            margin: 0;
             padding: 20px;
-            margin-bottom: 25px;
-            border: 2px solid #e2e8f0;
         }
-        
-        .site-list h3 {
-            color: #0f172a;
-            margin-bottom: 15px;
-            font-size: 16px;
+        .card {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 100%;
         }
-        
-        .site-item {
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #1e293b;
-            font-weight: 500;
-        }
-        
-        .site-item:last-child {
-            border-bottom: none;
-        }
-        
-        .site-item::before {
-            content: "🚫";
-            font-size: 18px;
-            opacity: 0.8;
-        }
-        
-        .pin-container {
-            background: #f8fafc;
-            padding: 25px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            border: 2px solid #e2e8f0;
-        }
-        
-        label {
-            display: block;
-            color: #475569;
-            margin-bottom: 12px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
+        h1 { color: #8b5cf6; }
         input {
             width: 100%;
-            padding: 18px;
-            font-size: 36px;
+            padding: 15px;
+            font-size: 30px;
             text-align: center;
-            letter-spacing: 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            font-family: monospace;
-            background: white;
-            color: #0f172a;
+            background: #0f172a;
+            border: 2px solid #334155;
+            color: white;
+            border-radius: 8px;
+            margin: 15px 0;
         }
-        
-        input:focus {
-            outline: none;
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
-        }
-        
         button {
             width: 100%;
-            padding: 18px;
+            padding: 15px;
             background: #8b5cf6;
             color: white;
             border: none;
-            border-radius: 16px;
-            font-size: 18px;
-            font-weight: 600;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
-        
-        button:hover {
-            background: #7c3aed;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px #8b5cf6;
-        }
-        
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .message {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            display: none;
-            font-weight: 500;
-        }
-        
-        .message.success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #10b981;
-            display: block;
-        }
-        
-        .message.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #ef4444;
-            display: block;
-        }
-        
-        .loading {
-            text-align: center;
-            color: #64748b;
-            padding: 30px;
-            font-size: 16px;
-        }
-        
-        .loading::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-        
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #94a3b8;
-            font-size: 13px;
+        .site-item {
+            padding: 8px;
+            background: #0f172a;
+            margin: 5px 0;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>
-            🛡️ FOCUS PILOT
-            <span>GUARDIAN</span>
-        </h1>
-        <p class="subtitle">Your friend needs your help to stay focused</p>
+        <h1>🛡️ Guardian PIN</h1>
+        <p>সাইট লিস্ট:</p>
+        <div id="siteList"></div>
         
-        <div class="info-box">
-            <p>🔒 আপনি একজন গার্ডিয়ান হিসেবে কাজ করছেন</p>
-            <p>📍 আপনার বন্ধু এই সাইটগুলো ব্লক করতে চায়:</p>
-        </div>
-        
-        <div id="siteList" class="site-list">
-            <div class="loading">সাইট লিস্ট আনা হচ্ছে</div>
-        </div>
-        
-        <div class="pin-container">
-            <label>🔐 সাইট লক করতে ৪ ডিজিটের PIN দিন:</label>
-            <input type="text" id="pinInput" maxlength="4" placeholder="****" inputmode="numeric">
-            <button id="lockBtn">
-                <span>🔒</span> লক করুন
-            </button>
-        </div>
-        
-        <div id="message" class="message"></div>
-        
-        <div class="footer">
-            © 2024 Focus Pilot - সমস্ত অধিকার সংরক্ষিত 🇧🇩
-        </div>
+        <input type="text" id="pin" maxlength="4" placeholder="****">
+        <button id="setPin">PIN সেট করুন</button>
+        <div id="message"></div>
     </div>
-    
+
     <script>
-        // ==================== কনফিগারেশন ====================
-        const API_BASE = 'https://nahid-mahmud555.github.io/Focus'; // তোর বেস URL
-        
-        // URL থেকে আইডি নেওয়া
         const urlParams = new URLSearchParams(window.location.search);
-        const guardianId = urlParams.get('id');
+        const id = urlParams.get('id');
         
-        console.log('🔑 Guardian ID:', guardianId);
-        
-        // ==================== ডোম এলিমেন্টস ====================
-        const siteList = document.getElementById('siteList');
-        const pinInput = document.getElementById('pinInput');
-        const lockBtn = document.getElementById('lockBtn');
-        const messageDiv = document.getElementById('message');
-        
-        // ==================== হেল্পার ফাংশন ====================
-        
-        // মেসেজ দেখানো
-        function showMessage(text, type) {
-            messageDiv.textContent = text;
-            messageDiv.className = 'message ' + type;
+        document.getElementById('setPin').onclick = () => {
+            const pin = document.getElementById('pin').value;
             
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 4000);
-        }
-        
-        // লোডিং স্টেট
-        function setLoading(isLoading) {
-            if (isLoading) {
-                siteList.innerHTML = '<div class="loading">সাইট লিস্ট আনা হচ্ছে</div>';
-                lockBtn.disabled = true;
-            } else {
-                lockBtn.disabled = false;
+            if (pin && pin.length === 4) {
+                // এক্সটেনশনে পাঠানোর চেষ্টা
+                if (typeof browser !== 'undefined') {
+                    browser.runtime.sendMessage({
+                        action: 'setPinFromWeb',
+                        id: id,
+                        pin: pin
+                    }).then(() => {
+                        document.getElementById('message').innerHTML = '✅ PIN সেট হয়েছে!';
+                    });
+                } else {
+                    alert('PIN: ' + pin);
+                    document.getElementById('message').innerHTML = '✅ PIN সংরক্ষিত!';
+                }
             }
-        }
+        };
         
-        // ==================== ডাটা লোড ====================
-        
-        // সাইট লিস্ট লোড (এক্সটেনশন থেকে)
-        function loadSites() {
-            setLoading(true);
-            
-            // প্রথমে এক্সটেনশনে মেসেজ পাঠানোর চেষ্টা করি
-            if (typeof browser !== 'undefined' && browser.runtime) {
-                browser.runtime.sendMessage({
-                    action: 'getSites',
-                    id: guardianId
-                }).then(response => {
-                    if (response && response.sites && response.sites.length > 0) {
-                        renderSites(response.sites);
-                    } else {
-                        loadSitesFromStorage();
-                    }
-                }).catch(() => {
-                    loadSitesFromStorage();
-                });
-            } else {
-                loadSitesFromStorage();
-            }
-        }
-        
-        // লোকাল স্টোরেজ থেকে সাইট লিস্ট (ডেমো)
-        function loadSitesFromStorage() {
-            // ডেমো সাইট লিস্ট
-            const demoSites = [
-                'facebook.com',
-                'youtube.com',
-                'twitter.com',
-                'instagram.com',
-                'tiktok.com'
-            ];
-            
-            setTimeout(() => {
-                renderSites(demoSites);
-            }, 1000);
-        }
-        
-        // সাইট লিস্ট রেন্ডার
-        function renderSites(sites) {
-            if (sites && sites.length > 0) {
-                siteList.innerHTML = `
-                    <h3>🚫 এই সাইটগুলি ব্লক হবে:</h3>
-                    ${sites.map(site => `<div class="site-item">${site}</div>`).join('')}
-                `;
-            } else {
-                siteList.innerHTML = '<p style="text-align: center; color: #64748b;">কোন সাইট নির্বাচন করা হয়নি</p>';
-            }
-            setLoading(false);
-        }
-        
-        // ==================== PIN সেট করা ====================
-        
-        function setPin() {
-            const pin = pinInput.value.trim();
-            
-            // PIN ভ্যালিডেশন
-            if (!pin || pin.length !== 4) {
-                showMessage('❌ দয়া করে ৪ ডিজিটের PIN দিন', 'error');
-                return;
-            }
-            
-            if (!/^\d+$/.test(pin)) {
-                showMessage('❌ শুধুমাত্র সংখ্যা ব্যবহার করুন', 'error');
-                return;
-            }
-            
-            setLoading(true);
-            
-            // এক্সটেনশনে PIN পাঠানো
-            if (typeof browser !== 'undefined' && browser.runtime) {
-                browser.runtime.sendMessage({
-                    action: 'setPinFromWeb',
-                    id: guardianId,
-                    pin: pin
-                }).then(response => {
-                    if (response && response.success) {
-                        handleSuccess();
-                    } else {
-                        saveToLocalStorage(pin);
-                    }
-                }).catch(() => {
-                    saveToLocalStorage(pin);
-                });
-            } 
-            else if (typeof chrome !== 'undefined' && chrome.runtime) {
-                chrome.runtime.sendMessage({
-                    action: 'setPinFromWeb',
-                    id: guardianId,
-                    pin: pin
-                }, (response) => {
-                    if (response && response.success) {
-                        handleSuccess();
-                    } else {
-                        saveToLocalStorage(pin);
-                    }
-                });
-            }
-            else {
-                saveToLocalStorage(pin);
-            }
-        }
-        
-        // সফল হলে
-        function handleSuccess() {
-            showMessage('✅ PIN সেট করা হয়েছে! সাইট এখন লক করা আছে।', 'success');
-            lockBtn.disabled = true;
-            pinInput.disabled = true;
-            
-            // ২ সেকেন্ড পরে উইন্ডো বন্ধ কর
-            setTimeout(() => {
-                window.close();
-            }, 2000);
-        }
-        
-        // লোকাল স্টোরেজে সেভ (ডেমো)
-        function saveToLocalStorage(pin) {
-            try {
-                localStorage.setItem('guardian_' + guardianId, JSON.stringify({
-                    pin: pin,
-                    timestamp: Date.now(),
-                    locked: true
-                }));
-                
-                showMessage('✅ PIN সংরক্ষিত! (ডেমো মোড)', 'success');
-                console.log('PIN saved for ID:', guardianId, 'PIN:', pin);
-                
-                lockBtn.disabled = true;
-                pinInput.disabled = true;
-                
-                // এক্সটেনশনে নকল মেসেজ
-                window.opener?.postMessage({
-                    type: 'PIN_SET',
-                    id: guardianId,
-                    pin: pin
-                }, '*');
-                
-            } catch (e) {
-                showMessage('❌ সংরক্ষণে সমস্যা', 'error');
-            }
-        }
-        
-        // ==================== ইভেন্ট লিসেনার ====================
-        
-        // শুধু নাম্বার ইনপুট
-        pinInput.addEventListener('input', (e) => {
+        // শুধু নাম্বার
+        document.getElementById('pin').oninput = (e) => {
             e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        });
+        };
         
-        // লক বাটন ক্লিক
-        lockBtn.addEventListener('click', setPin);
-        
-        // এন্টার চাপলে
-        pinInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') setPin();
-        });
-        
-        // চেক করি আগে থেকে PIN সেট করা আছে কিনা
-        function checkExistingPin() {
-            const existing = localStorage.getItem('guardian_' + guardianId);
-            if (existing) {
-                try {
-                    const data = JSON.parse(existing);
-                    if (data.locked) {
-                        siteList.innerHTML += '<p style="color: #10b981; margin-top: 15px; text-align: center;">✅ এই সেশনটি ইতিমধ্যে লক করা আছে</p>';
-                        lockBtn.disabled = true;
-                        pinInput.disabled = true;
-                    }
-                } catch (e) {}
-            }
-        }
-        
-        // ==================== ইনিশিয়ালাইজ ====================
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSites();
-            checkExistingPin();
-        });
-        
-        // প্যারেন্ট থেকে মেসেজ শোনা (যদি পপআপ হয়)
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'SITES_UPDATE') {
-                renderSites(event.data.sites);
-            }
-        });
+        // ডেমো সাইট
+        document.getElementById('siteList').innerHTML = `
+            <div class="site-item">facebook.com</div>
+            <div class="site-item">youtube.com</div>
+            <div class="site-item">twitter.com</div>
+        `;
     </script>
 </body>
 </html>
